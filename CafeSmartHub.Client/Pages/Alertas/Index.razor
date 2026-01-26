@@ -1,0 +1,70 @@
+﻿@page "/alertas"
+@inject CafeSmartHub.Client.Services.AlertasApi Api
+
+<h3>Alertas - Stock Mínimo</h3>
+
+<button class="btn btn-outline-secondary mb-3" @onclick="Reload">Recargar</button>
+
+@if (loading)
+{
+    <p>Cargando...</p>
+}
+else if (items is null || items.Count == 0)
+{
+    <div class="alert alert-success">No hay productos bajo stock mínimo 🎉</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th class="text-end">Stock</th>
+                <th class="text-end">Mínimo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in items)
+            {
+                <tr>
+                    <td>@a.ProductoNombre</td>
+                    <td>@a.CategoriaNombre</td>
+                    <td class="text-end">@a.StockActual</td>
+                    <td class="text-end">@a.StockMinimo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@code {
+    private List<CafeSmartHub.Client.Models.AlertaStockDto>? items;
+    private bool loading = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        error = null;
+        loading = true;
+        try
+        {
+            items = await Api.GetStockMinimo();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

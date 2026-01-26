@@ -1,0 +1,94 @@
+﻿@page "/categorias"
+@inject CafeSmartHub.Client.Services.CategoriasApi Api
+@inject NavigationManager Nav
+
+<h3>Categorías</h3>
+
+<div class="mb-3 d-flex gap-2 flex-wrap">
+    <button class="btn btn-primary" type="button" @onclick="GoCreate">Nueva</button>
+    <button class="btn btn-outline-secondary" type="button" @onclick="Reload">Recargar</button>
+</div>
+
+@if (loading)
+{
+    <p>Cargando...</p>
+}
+else if (items is null || items.Count == 0)
+{
+    <p>No hay categorías.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Activa</th>
+                <th style="width:160px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in items)
+            {
+                <tr>
+                    <td>@c.Nombre</td>
+                    <td>@(c.Activa ? "Sí" : "No")</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary" type="button" @onclick="() => GoEdit(c.Id)">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger ms-2" type="button" @onclick="() => Delete(c.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@code {
+    private List<CafeSmartHub.Client.Models.CategoriaReadDto>? items;
+    private bool loading = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private void GoCreate() => Nav.NavigateTo("/categorias/nueva");
+
+    private void GoEdit(int id) => Nav.NavigateTo($"/categorias/editar/{id}");
+
+    private async Task Reload()
+    {
+        error = null;
+        loading = true;
+
+        try
+        {
+            items = await Api.GetAll();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        error = null;
+        try
+        {
+            await Api.Delete(id);
+            await Reload();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

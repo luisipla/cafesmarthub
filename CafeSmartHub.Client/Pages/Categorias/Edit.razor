@@ -1,0 +1,96 @@
+﻿@page "/categorias/editar/{Id:int}"
+@inject CafeSmartHub.Client.Services.CategoriasApi Api
+@inject NavigationManager Nav
+
+<h3>Editar Categoría</h3>
+
+@if (loading)
+{
+    <p>Cargando...</p>
+}
+else if (model is null)
+{
+    <div class="alert alert-warning">No encontrada.</div>
+    <button class="btn btn-secondary" type="button" @onclick="GoBack">Volver</button>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <InputText class="form-control" @bind-Value="model.Nombre" />
+        </div>
+
+        <div class="form-check mb-3">
+            <InputCheckbox class="form-check-input" @bind-Value="model.Activa" />
+            <label class="form-check-label">Activa</label>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <button class="btn btn-secondary" type="button" @onclick="GoBack">Volver</button>
+        </div>
+    </EditForm>
+}
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger mt-3">@error</div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private CafeSmartHub.Client.Models.CategoriaUpdateDto? model;
+    private bool loading = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var dto = await Api.GetById(Id);
+            if (dto is null)
+            {
+                model = null;
+                return;
+            }
+
+            model = new()
+            {
+                Id = dto.Id,
+                Nombre = dto.Nombre,
+                Activa = dto.Activa
+            };
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task Save()
+    {
+        if (model is null) return;
+
+        error = null;
+        try
+        {
+            await Api.Update(Id, model);
+            Nav.NavigateTo("/categorias");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private void GoBack() => Nav.NavigateTo("/categorias");
+}

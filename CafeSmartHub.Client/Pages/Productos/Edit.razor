@@ -1,0 +1,118 @@
+﻿@page "/productos/editar/{Id:int}"
+@using CafeSmartHub.Client.Models
+@using CafeSmartHub.Client.Services
+@inject ProductosApi Api
+@inject CategoriasApi CatApi
+@inject NavigationManager Nav
+
+<h3>Editar Producto</h3>
+
+@if (loading)
+{
+    <p>Cargando datos del producto...</p>
+}
+else if (model == null)
+{
+    <div class="alert alert-warning">No se encontró el producto.</div>
+    <button class="btn btn-secondary" @onclick="GoBack">Volver</button>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <InputText class="form-control" @bind-Value="model.Nombre" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Categoría</label>
+            <InputSelect class="form-select" @bind-Value="model.CategoriaProductoId">
+                <option value="0">-- Selecciona una categoría --</option>
+                @foreach (var c in categorias)
+                {
+                    <option value="@c.Id">@c.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Precio</label>
+                <InputNumber class="form-control" @bind-Value="model.Precio" />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Stock Actual</label>
+                <InputNumber class="form-control" @bind-Value="model.StockActual" />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Stock Mínimo</label>
+                <InputNumber class="form-control" @bind-Value="model.StockMinimo" />
+            </div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="model.Activo" id="chkActivo" />
+            <label class="form-check-label" for="chkActivo">Producto Activo</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="button" class="btn btn-secondary" @onclick="GoBack">Cancelar</button>
+        </div>
+    </EditForm>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger mt-3">@error</div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private ProductoUpdateDto? model;
+    private List<CategoriaReadDto> categorias = new();
+    private bool loading = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            //  categorías para el desplegable
+            var cats = await CatApi.GetAll(activa: true);
+            if (cats != null) categorias = cats;
+
+            // producto específico
+            var p = await Api.GetById(Id);
+            if (p != null)
+            {
+                model = new ProductoUpdateDto
+                {
+                    Nombre = p.Nombre,
+                    Precio = p.Precio,
+                    StockActual = p.StockActual,
+                    StockMinimo = p.StockMinimo,
+                    Activo = p.Activo,
+                    CategoriaProductoId = p.CategoriaProductoId,
+                    UnidadMedida = p.UnidadMedida
+                };
+            }
+        }
+        catch (Exception ex) { error = ex.Message; }
+        finally { loading = false; }
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            await Api.Update(Id, model!);
+            Nav.NavigateTo("/productos");
+        }
+        catch (Exception ex) { error = ex.Message; }
+    }
+
+    private void GoBack() => Nav.NavigateTo("/productos");
+}

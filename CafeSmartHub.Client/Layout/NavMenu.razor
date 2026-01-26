@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject CafeSmartHub.Client.Auth.JwtAuthStateProvider JwtAuth
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">CafeSmartHub</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+
+        <AuthorizeView Context="auth">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill" aria-hidden="true"></span> Inicio
+                    </NavLink>
+                </div>
+
+                @* ADMIN: ve Categorías + Productos *@
+                @if (auth.User.IsInRole("Admin"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="categorias" Match="NavLinkMatch.All">
+                            <span class="bi bi-tags-fill" aria-hidden="true"></span> Categorías
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="productos" Match="NavLinkMatch.All">
+                            <span class="bi bi-box-seam-fill" aria-hidden="true"></span> Productos
+                        </NavLink>
+                    </div>
+                }
+
+                @* Admin y User ven Alertas *@
+                @if (auth.User.IsInRole("Admin") || auth.User.IsInRole("User"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="alertas" Match="NavLinkMatch.All">
+                            <span class="bi bi-exclamation-triangle-fill" aria-hidden="true"></span> Alertas
+                        </NavLink>
+                    </div>
+                }
+
+                <div class="nav-item px-3 mt-2">
+                    <button class="btn btn-sm btn-outline-light w-100" @onclick="Logout">
+                        Salir
+                    </button>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">
+                        <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </nav>
+</div>
+
+@code {
+    private async Task Logout()
+    {
+        await JwtAuth.LogoutAsync();
+    }
+}

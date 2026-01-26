@@ -1,0 +1,108 @@
+﻿@page "/productos"
+
+@inject CafeSmartHub.Client.Services.ProductosApi Api
+@inject NavigationManager Nav
+
+<h3>Productos</h3>
+
+<div class="mb-3 d-flex gap-2 flex-wrap">
+    <button class="btn btn-primary" type="button" @onclick="GoCreate">Nuevo</button>
+    <button class="btn btn-outline-secondary" type="button" @onclick="Reload">Recargar</button>
+</div>
+
+@if (loading)
+{
+    <p>Cargando...</p>
+}
+else if (items is null || items.Count == 0)
+{
+    <p>No hay productos.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Stock mínimo</th>
+                <th style="width: 160px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in items)
+            {
+                <tr>
+                    <td>@p.Nombre</td>
+                    <td>@p.Precio</td>
+                    <td>@p.StockActual</td>
+                    <td>@p.StockMinimo</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary"
+                                type="button"
+                                @onclick="() => GoEdit(p.Id)">
+                            Editar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger ms-2"
+                                type="button"
+                                @onclick="() => Delete(p.Id)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@code {
+    private List<CafeSmartHub.Client.Models.ProductoReadDto>? items;
+    private bool loading = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+        => await Reload();
+
+    private void GoCreate() => Nav.NavigateTo("/productos/nuevo");
+    private void GoEdit(int id) => Nav.NavigateTo($"/productos/editar/{id}");
+
+    private async Task Reload()
+    {
+        error = null;
+        loading = true;
+
+        try
+        {
+            items = await Api.GetAll();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        error = null;
+
+        try
+        {
+            await Api.Delete(id);
+            await Reload();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
