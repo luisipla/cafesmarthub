@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+**/*.cache
+**/wwwroot/service-worker-assets.js
+**/appsettings.Development.json
+**/appsettings.*.local.json
+**/publish/
