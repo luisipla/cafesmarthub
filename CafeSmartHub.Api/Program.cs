@@ -8,20 +8,24 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
-//  CORS: Permitir al cliente hablar con la API
+//  CORS: Permitir que el Frontend (Render + Local) hable con la API
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod());
+        policy.WithOrigins(
+                "https://cafesmarthub-client.onrender.com",
+                "http://localhost:5173",
+                "http://localhost:5000",
+                "https://localhost:5001"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
 });
 
-//  JSON: Evitar ciclos infinitos
+// JSON: Evitar ciclos infinitos
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -38,13 +42,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     });
 });
 
-//  Servicios 
+//  Servicios
 builder.Services.AddScoped<ICategoriasService, CategoriasService>();
 builder.Services.AddScoped<IProductosService, ProductosService>();
 builder.Services.AddScoped<IAlertasService, AlertasService>();
 builder.Services.AddScoped<IProveedoresService, ProveedoresService>();
 
-// JWT Auth 
+// JWT Auth
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<JwtTokenService>();
 
@@ -81,10 +85,10 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-// CORS
-app.UseCors("AllowClient");
+app.UseRouting();            
 
-// Auth en orden correcto 
+app.UseCors("AllowClient");  
+
 app.UseAuthentication();
 app.UseAuthorization();
 
