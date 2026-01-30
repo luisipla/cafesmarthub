@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "CafeSmartHub.Client",
   "resources": {
-    "hash": "sha256-8ZMHu9aapQIN2RMDvcoTnn5TOV1sZ6+HFw7BYW4L7G4=",
+    "hash": "sha256-DIF2CJCv/KaKqWkbmmfukpvtRa5diMUEQzVPYIHDpqg=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-D0bzod5lwwSzPR43JC8TTCcZKw+3jIHOk8CZFCRj5is="
     },
@@ -63,7 +63,7 @@
       "System.Text.RegularExpressions.wasm": "sha256-3W9FSHhJnymXzdUqrxjgrpUOznpPW+8vDLZntL7hmmA=",
       "System.wasm": "sha256-9DLmgOsnmEbjuZrRVFruRmVRvh/skjCDv6hQMjVZ3K8=",
       "System.Private.CoreLib.wasm": "sha256-kJWNmttbPnQAx5mc/J6QMmdEir7GUsMhjg0S5TQi59U=",
-      "CafeSmartHub.Client.wasm": "sha256-Qz7K/O4rog1UdRpD2bkfxryiv/Y60EXY++GuGsbZ71o="
+      "CafeSmartHub.Client.wasm": "sha256-5dXMmrYgnn9IpJEzlGrofkz/0otlvEA4LVPn5OIkgIw="
     }
   },
   "cacheBootResources": true,
