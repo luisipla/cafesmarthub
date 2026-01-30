@@ -8,7 +8,7 @@ namespace CafeSmartHub.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Tags("Productos")]
-[Authorize(Roles = "Admin,User")] // ✅ Por defecto: ambos pueden acceder
+[Authorize(Roles = "Admin,User")] // ambos pueden acceder
 public class ProductosController : ControllerBase
 {
     private readonly IProductosService _svc;
@@ -33,7 +33,7 @@ public class ProductosController : ControllerBase
 
     // POST: api/Productos
     [HttpPost]
-    [Authorize(Roles = "Admin")] // ✅ Solo Admin
+    [Authorize(Roles = "Admin")] // Solo Admin
     public async Task<ActionResult<ProductoReadDto>> Create([FromBody] ProductoCreateDto dto)
     {
         var created = await _svc.Create(dto);
@@ -42,7 +42,7 @@ public class ProductosController : ControllerBase
 
     // PUT: api/Productos
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")] // ✅ Solo Admin
+    [Authorize(Roles = "Admin")] // Solo Admin
     public async Task<IActionResult> Update(int id, [FromBody] ProductoUpdateDto dto)
     {
         var ok = await _svc.Update(id, dto);
@@ -51,7 +51,7 @@ public class ProductosController : ControllerBase
 
     // DELETE: api/Productos/5 (borrado lógico)
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")] // ✅ Solo Admin
+    [Authorize(Roles = "Admin")] // Solo Admin
     public async Task<IActionResult> Delete(int id)
     {
         var ok = await _svc.Delete(id);

@@ -1,0 +1,78 @@
+﻿@page "/proveedores/nuevo"
+@using CafeSmartHub.Client.Models
+@inject CafeSmartHub.Client.Services.ProveedoresApi Api
+@inject NavigationManager Nav
+
+<h3>Nuevo Proveedor</h3>
+
+<EditForm Model="model" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <InputText class="form-control" @bind-Value="model.Nombre" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Contacto</label>
+        <InputText class="form-control" @bind-Value="model.Contacto" />
+        <div class="form-text">Ej: teléfono, email, nombre de contacto, etc.</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Productos suministrados</label>
+        <InputTextArea class="form-control" rows="3" @bind-Value="model.ProductosSuministrados" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Condiciones de entrega</label>
+        <InputTextArea class="form-control" rows="3" @bind-Value="model.CondicionesEntrega" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Días de despacho</label>
+        <InputNumber class="form-control" @bind-Value="model.DiasDespacho" />
+    </div>
+
+    <div class="form-check mb-3">
+        <InputCheckbox class="form-check-input" @bind-Value="model.Activo" />
+        <label class="form-check-label">Activo</label>
+    </div>
+
+    <button class="btn btn-primary" type="submit" disabled="@saving">Guardar</button>
+    <button class="btn btn-outline-secondary ms-2" type="button" @onclick="Back">Volver</button>
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger mt-3">@error</div>
+}
+
+@code {
+    private ProveedorCreateDto model = new() { Activo = true };
+    private bool saving;
+    private string? error;
+
+    private async Task Save()
+    {
+        error = null;
+        saving = true;
+
+        try
+        {
+            await Api.Create(model);
+            Nav.NavigateTo("/proveedores");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private void Back() => Nav.NavigateTo("/proveedores");
+}

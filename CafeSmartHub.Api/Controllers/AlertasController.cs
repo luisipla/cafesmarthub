@@ -8,7 +8,7 @@ namespace CafeSmartHub.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Tags("Alertas")]
-[Authorize(Roles = "Admin,User")] // Ambos perfiles pueden ver alertas
+[Authorize(Roles = "Admin,User")] //  ver alertas
 public class AlertasController : ControllerBase
 {
     private readonly IAlertasService _svc;

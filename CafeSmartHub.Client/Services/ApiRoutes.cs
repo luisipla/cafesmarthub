@@ -4,5 +4,7 @@ public static class ApiRoutes
 {
     public const string Categorias = "api/Categorias";
     public const string Productos = "api/Productos";
+    public const string Proveedores = "api/Proveedores";
+
     public const string AlertasStockMinimo = "api/Alertas/stock-minimo";
 }

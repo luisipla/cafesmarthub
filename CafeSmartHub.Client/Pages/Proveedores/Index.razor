@@ -1,10 +1,10 @@
-﻿@page "/productos"
+﻿@page "/proveedores"
 
-@inject CafeSmartHub.Client.Services.ProductosApi Api
+@using CafeSmartHub.Client.Models
+@inject CafeSmartHub.Client.Services.ProveedoresApi Api
 @inject NavigationManager Nav
-@using System.Globalization
 
-<h3>Productos</h3>
+<h3>Proveedores</h3>
 
 <div class="mb-3 d-flex gap-2 flex-wrap">
     <button class="btn btn-primary" type="button" @onclick="GoCreate">Nuevo</button>
@@ -17,7 +17,7 @@
 }
 else if (items is null || items.Count == 0)
 {
-    <p>No hay productos.</p>
+    <p>No hay proveedores.</p>
 }
 else
 {
@@ -25,9 +25,9 @@ else
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Stock mínimo</th>
+                <th>Contacto</th>
+                <th>Días despacho</th>
+                <th>Activo</th>
                 <th style="width: 160px;"></th>
             </tr>
         </thead>
@@ -36,9 +36,9 @@ else
             {
                 <tr>
                     <td>@p.Nombre</td>
-                    <td>$@p.Precio.ToString("N0", new CultureInfo("es-CL"))</td>
-                    <td>@p.StockActual</td>
-                    <td>@p.StockMinimo</td>
+                    <td>@p.Contacto</td>
+                    <td>@p.DiasDespacho</td>
+                    <td>@(p.Activo ? "Sí" : "No")</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-outline-primary"
                                 type="button"
@@ -63,15 +63,15 @@ else
 }
 
 @code {
-    private List<CafeSmartHub.Client.Models.ProductoReadDto>? items;
+    private List<ProveedorReadDto>? items;
     private bool loading = true;
     private string? error;
 
     protected override async Task OnInitializedAsync()
         => await Reload();
 
-    private void GoCreate() => Nav.NavigateTo("/productos/nuevo");
-    private void GoEdit(int id) => Nav.NavigateTo($"/productos/editar/{id}");
+    private void GoCreate() => Nav.NavigateTo("/proveedores/nuevo");
+    private void GoEdit(int id) => Nav.NavigateTo($"/proveedores/editar/{id}");
 
     private async Task Reload()
     {

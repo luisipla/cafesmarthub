@@ -4,7 +4,7 @@ public record AppUser(string Username, string Password, string Role);
 
 public static class InMemoryUsersStore
 {
-    // Usuarios fijos para evaluación
+    // Usuarios
     private static readonly List<AppUser> _users = new()
     {
         new AppUser("admin", "admin", "Admin"),

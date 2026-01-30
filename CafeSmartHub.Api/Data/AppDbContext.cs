@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<CategoriaProducto> CategoriasProducto => Set<CategoriaProducto>();
     public DbSet<Producto> Productos => Set<Producto>();
+    public DbSet<Proveedor> Proveedores => Set<Proveedor>(); //  DbSet
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,6 +19,11 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Producto>()
             .HasIndex(p => p.Nombre);
+
+        //  índice único para Proveedor.Nombre
+        modelBuilder.Entity<Proveedor>()
+            .HasIndex(p => p.Nombre)
+            .IsUnique();
 
         modelBuilder.Entity<Producto>()
             .HasOne(p => p.CategoriaProducto)

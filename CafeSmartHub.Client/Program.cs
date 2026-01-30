@@ -29,8 +29,8 @@ builder.Services.AddAuthorizationCore();
 // Handler que agrega Authorization: Bearer 
 builder.Services.AddTransient<AuthHeaderHandler>();
 
-// HttpClient con handler 
-// Este HttpClient será el que usan CategoriasApi  ProductosApi AlertasApi
+// HttpClient con handler manejador , intercepta las llamadas HTTP antes de que salgan
+// HttpClient para el que usan CategoriasApi  ProductosApi AlertasApi
 builder.Services.AddScoped(sp =>
 {
     var handler = sp.GetRequiredService<AuthHeaderHandler>();
@@ -42,12 +42,13 @@ builder.Services.AddScoped(sp =>
     };
 });
 
-// APIs existentes
+// APIs 
 builder.Services.AddScoped<CategoriasApi>();
 builder.Services.AddScoped<ProductosApi>();
 builder.Services.AddScoped<AlertasApi>();
+builder.Services.AddScoped<ProveedoresApi>();
 
-// AuthApi (login)
+// AuthApi login
 builder.Services.AddScoped<AuthApi>();
 
 await builder.Build().RunAsync();

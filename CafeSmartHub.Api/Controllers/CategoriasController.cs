@@ -8,7 +8,7 @@ namespace CafeSmartHub.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Tags("Categorias")]
-[Authorize(Roles = "Admin,User")] // Por defecto: ambos pueden acceder
+[Authorize(Roles = "Admin,User")] // acceder a categorias user y admin
 public class CategoriasController : ControllerBase
 {
     private readonly ICategoriasService _svc;
